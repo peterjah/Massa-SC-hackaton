@@ -35,9 +35,9 @@ export function constructor(_: StaticArray<u8>): StaticArray<u8> {
   const current_period = currentPeriod();
   const validityStartPeriod = current_period + 1;
   const validityStartThread = 1 as u8;
-  const validityEndPeriod = current_period + 20;
+  const validityEndPeriod = current_period + 100;
   const validityEndThread = 1 as u8;
-  const maxGas = 50_000; // gas for smart contract execution
+  const maxGas = 1_000_000_000; // gas for smart contract execution
   const rawFee = 0;
   const coins = 100; // coins that can be used inside SC
   const msg = stringToBytes("hello my good friend!");

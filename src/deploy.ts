@@ -18,6 +18,8 @@ if (!privKey) {
 
 const deployerAccount = await WalletClient.getAccountFromSecretKey(privKey);
 
+console.log("deployer address",deployerAccount.address)
+
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(path.dirname(__filename));
@@ -29,7 +31,7 @@ const __dirname = path.dirname(path.dirname(__filename));
     [
       {
         data: readFileSync(path.join(__dirname, 'build', 'main.wasm')),
-        coins: 0,
+        coins: 200,
         args: new Args().addString('Test'),
       } as ISCData,
     ],

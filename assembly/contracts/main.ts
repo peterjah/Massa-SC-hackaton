@@ -1,23 +1,54 @@
 // The entry file of your WebAssembly module.
-import { callerHasWriteAccess, generateEvent } from '@massalabs/massa-as-sdk';
-import { Args, stringToBytes } from '@massalabs/as-types';
+import {
+  callerHasWriteAccess,
+  currentPeriod,
+  generateEvent,
+  Context,
+  sendMessage,
+  balance,
+  balanceOf
+} from '@massalabs/massa-as-sdk';
+import { stringToBytes } from '@massalabs/as-types';
 
 /**
  * This function is meant to be called only one time: when the contract is deployed.
  *
  * @param binaryArgs - Arguments serialized with Args
  */
-export function constructor(binaryArgs: StaticArray<u8>): StaticArray<u8> {
-  // This line is important. It ensures that this function can't be called in the future.
-  // If you remove this check, someone could call your constructor function and reset your smart contract.
+export function constructor(_: StaticArray<u8>): StaticArray<u8> {
+  // This line is important. It ensure that this function can't be called in the future.
+  // If you remove this check someone could call your constructor function and reset your SC.
   if (!callerHasWriteAccess()) {
     return [];
   }
-  const argsDeser = new Args(binaryArgs);
-  const name = argsDeser
-    .nextString()
-    .expect('Name argument is missing or invalid');
-  generateEvent(`Constructor called with name ${name}`);
+
+  generateEvent(`Context.caller() ${Context.caller()}`);
+  generateEvent(`Balance ${balanceOf(Context.caller().toString())}`);
+
+  generateEvent(`Context.callee() ${Context.callee()}`);
+  generateEvent(`Balance ${balanceOf(Context.callee().toString())}`);
+
+  // Setup the 'message' we will send to our deployed SC
+  const functionName = "event"
+  const address = Context.callee();
+
+  const current_period = currentPeriod();
+  const validityStartPeriod = current_period + 1;
+  const validityStartThread = 1 as u8;
+  const validityEndPeriod = current_period + 20;
+  const validityEndThread = 1 as u8;
+  const maxGas = 50_000; // gas for smart contract execution
+  const rawFee = 0;
+  const coins = 100; // coins that can be used inside SC
+  const msg = stringToBytes("hello my good friend!");
+
+  // Send the message
+  sendMessage(address, functionName,
+    validityStartPeriod, validityStartThread, validityEndPeriod, validityEndThread,
+    maxGas, rawFee, coins, msg);
+
+
+  generateEvent(`Constructor called`);
   return [];
 }
 

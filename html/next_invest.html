@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Investment Platform</title>
+  <style>
+    .grid {
+      display: grid;
+      grid-template-columns: 50% 50%;
+      grid-gap: 10px;
+    }
+    .grid-left {
+      grid-column: 1 / 2;
+      grid-row: 1/2;
+      text-align: left;
+    }
+    .grid-right {
+      grid-column: 2 / 3;
+      grid-row: 1/2;
+      text-align: left;
+    }
+    .grid-bottom-left {
+      grid-column: 2 / 3;
+      grid-row: 2/2;
+      text-align: left;
+    }
+    form {
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+    <script type='text/javascript' src="https://cdn.jsdelivr.net/npm/@massalabs/massa-web3@1.11.0/bundle.js"></script>
+    <h1>Massa Trade</h1>
+  <div class="grid">
+    <div class="grid-left">
+      <h3>Order Limit</h3>
+      <form>
+        Asset: 
+        <select id="asset">
+          <option value="ETH">ETH</option>
+          <option value="BTC">BTC</option>
+          <option value="SOL">SOL</option>
+
+        </select> <div>Actual Price : <span id="price"></span></div> <br><br>
+        
+
+        Action: 
+        <input type="radio" id="buy" name="action" value="buy">
+        <label for="buy">Buy</label>
+        <input type="radio" id="sell" name="action" value="sell">
+        <label for="sell">Sell</label><br><br>
+
+        Price Limit: <input type="number" id="priceLimit"><br><br>
+        Date of Validity: <input type="date" id="validityDate"><br><br>
+        <input type="button" value="Submit Order" onClick="submitOrder();">
+        <input type="button" value="Get Price" onClick="getPrice();">
+      </form>
+    </div>
+    </body>
+    <div class="grid-right">
+      <h3>Dollar Cost Averaging</h3>
+      <form>
+        Portfolio of Assets:<br>
+        <div style="display: flex; align-items: center;">
+          <input type="checkbox" id="sol" name="asset" value="sol">
+          <label for="sol"style="padding-right: 18px;">SOL</label>
+          <input type="number" id="solPercentage" style="width: 70px; margin-left: 10px;">%
+        </div>
+        <div style="display: flex; align-items: center;">
+          <input type="checkbox" id="etc" name="asset" value="etc">
+          <label for="etc"style="padding-right: 17px;">ETH</label>
+          <input type="number" id="ethPercentage" style="width: 70px; margin-left: 10px;">%
+        </div>
+        <div style="display: flex; align-items: center;">
+          <input type="checkbox" id="avax" name="asset" value="avax">
+          <label for="avax"style="padding-right: 10px;">AVAX</label>
+          <input type="number" id="avaxPercentage" style="width: 70px; margin-left: 10px;">%
+        </div>
+        <div style="display: flex; align-items: center;">
+          <input type="checkbox" id="atom" name="asset" value="atom">
+          <label for="atom"style="padding-right: 4px;">ATOM</label>
+          <input type="number" id="atomPercentage" style="width: 70px; margin-left: 10px;">%
+        </div>
+        <div style="display: flex; align-items: center;">
+            <input type="checkbox" id="fantom" name="asset" value="fantom">
+            <label for="fantom"style="padding-right: 17px;">FTM</label>
+            <input type="number" id="fantommPercentage" style="width: 70px; margin-left: 10px;">%
+          </div>
+        <br>
+        Date of Validity: <input type="date" id="validityDate"><br><br>
+        <input type="button" value="Submit Plan" onClick="submitPlan();">
+        <script src="js/index.js"></script>
+        </div>
+      </div>
+      </form>
+      <style>
+          #asset, #price {
+          display: inline-block;
+          vertical-align: middle;
+        }
+        label {
+          font-weight: bold;
+          margin-right: 10px;
+        }
+        input[type="number"] {
+          width: 80px;
+        }
+        input[type="button"] {
+          background-color: #4CAF50;
+          color: white;
+          padding: 12px 20px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+        select {
+          padding: 10px;
+          border-radius: 5px;
+          border: 1px solid #ccc;
+        }
+
+        body {
+  background-color: #333;
+  color: #fff;
+}
+
+h3 {
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+}
+
+.grid {
+  background-color: #444;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+form {
+  background-color: #555;
+  color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 2px #000;
+}
+
+
+h1 {
+  text-align: center;
+  font-size: 36px;
+  text-shadow: 1px 1px 2px #000;
+  margin-top: 50px;
+}
+
+      </style>
+      

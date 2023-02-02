@@ -3,7 +3,8 @@ import { readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { deploySC, WalletClient, ISCData } from '@massalabs/massa-sc-deployer';
-import { Client, ClientFactory, IProvider, ProviderType } from '@massalabs/massa-web3';
+import { Client, ClientFactory, IProvider, ISlot, ProviderType } from '@massalabs/massa-web3';
+import delay from "delay"
 
 dotenv.config();
 
@@ -41,8 +42,8 @@ const client: Client = await ClientFactory.createCustomClient(
     deployerAccount,
     [
       {
-        data: readFileSync(path.join(__dirname, 'build', 'main.wasm')),
-        coins: 1000,
+        data: readFileSync(path.join(__dirname, 'build', 'autonomous.wasm')),
+        coins: 1_000_000_000_000,
         // args: new Args(),
       } as ISCData,
     ],
@@ -56,12 +57,15 @@ const client: Client = await ClientFactory.createCustomClient(
   console.log("event", deployedSCEvent)
   const addr = deployedSCEvent!.data.substring("Contract deployed at address: ".length, deployedSCEvent?.data.length)
 
+  let fetchedBlocks: string[] = []
+  let slot = {} as ISlot;
+  console.log(`listening autonomous SC events on "${addr}"`)
+
   while (1) {
-    console.log(`listening autonomous SC events on "${addr}"`)
 
     const events = await client.smartContracts().getFilteredScOutputEvents({
       emitter_address: addr,
-      start: null,
+      start: slot?.thread ? slot: null,
       end: null,
       original_caller_address: null,
       original_operation_id: null,
@@ -69,11 +73,25 @@ const client: Client = await ClientFactory.createCustomClient(
     });
 
     if (events.length) {
-      console.log('Events received: ');
+      console.log(`${events.length} Events received:`);
+
       events.forEach((e) => {
-        console.log(e);
+
+        const block = e.context.block!
+        if(!fetchedBlocks.includes(block)) {
+          fetchedBlocks.push(block)
+          slot = e.context.slot
+          console.log("event ID:",e.id);
+          console.log("block:",e.context.block);
+          console.log("slot:",e.context.slot);
+          console.log(e.data);
+        }
+
       });
+      slot.thread++
     }
+
+    await delay(1000)
   }
 
 })();

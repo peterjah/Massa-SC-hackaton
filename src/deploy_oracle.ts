@@ -3,7 +3,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { deploySC, WalletClient, ISCData } from '@massalabs/massa-sc-deployer';
-import { Args, Client, ClientFactory, IProvider, EOperationStatus, ProviderType, bytesToU64 } from '@massalabs/massa-web3';
+import { Args, Client, ClientFactory, IProvider, EOperationStatus, ProviderType } from '@massalabs/massa-web3';
 
 import delay from "delay"
 
@@ -44,7 +44,7 @@ const client: Client = await ClientFactory.createCustomClient(
     [
       {
         data: readFileSync(path.join(__dirname, 'build', 'oracle.wasm')),
-        coins: 1_000_000_000_000,
+        coins: 0,
         // args: new Args(),
       } as ISCData,
     ],
@@ -64,8 +64,8 @@ const client: Client = await ClientFactory.createCustomClient(
   let price = BigInt(1000)
   while (1) {
 
-    price = price + BigInt(100)
-    console.log(`calling updatePrice SC`)
+    price = price + BigInt(1)
+    // console.log(`calling updatePrice SC`)
 
     const opId = await client.smartContracts().callSmartContract({
       fee: 0,
@@ -75,53 +75,53 @@ const client: Client = await ClientFactory.createCustomClient(
       functionName: "updatePrice",
       parameter: new Args().addU64(price).serialize(),
     })
-    console.log("res", opId)
-    const status = await client.smartContracts().getOperationStatus(opId)
-    console.log("status", status)
+    // console.log("res", opId)
+    // const status = await client.smartContracts().getOperationStatus(opId)
+    // console.log("status", status)
 
-    const final = await client.smartContracts().awaitRequiredOperationStatus(opId, EOperationStatus.FINAL)
-    console.log("final", final)
+    // const final = await client.smartContracts().awaitRequiredOperationStatus(opId, EOperationStatus.FINAL)
+    // console.log("final", final)
 
 
     // console.log(`Done. res= ${bytesToU64(res).toString()}`)
 
-    const events = await client.smartContracts().getFilteredScOutputEvents({
-      emitter_address: null,
-      start: null,
-      end: null,
-      original_caller_address: null,
-      original_operation_id: opId,
-      is_final: true,
-    });
+    // const events = await client.smartContracts().getFilteredScOutputEvents({
+    //   emitter_address: null,
+    //   start: null,
+    //   end: null,
+    //   original_caller_address: null,
+    //   original_operation_id: opId,
+    //   is_final: true,
+    // });
 
-    if (events.length) {
-      console.log(`${events.length} Events received:`);
+    // if (events.length) {
+    //   console.log(`${events.length} Events received:`);
 
-      events.forEach((e) => {
+    //   events.forEach((e) => {
 
-        const block = e.context.block!
-        if (!fetchedBlocks.includes(block)) {
-          fetchedBlocks.push(block)
-          console.log("event ID:", e.id);
-          console.log("block:", e.context.block);
-          console.log("slot:", e.context.slot);
-          console.log(e.data);
-        }
+    //     const block = e.context.block!
+    //     if (!fetchedBlocks.includes(block)) {
+    //       fetchedBlocks.push(block)
+    //       console.log("event ID:", e.id);
+    //       console.log("block:", e.context.block);
+    //       console.log("slot:", e.context.slot);
+    //       console.log(e.data);
+    //     }
 
-      });
-    }
+    //   });
+    // }
 
-    const result = await client.smartContracts().readSmartContract({
-      fee: 0,
-      maxGas: 700000,
-      targetAddress: addr,
-      targetFunction: "getPrice",
-      parameter: new Args().serialize(),
-    });
+    // const result = await client.smartContracts().readSmartContract({
+    //   fee: 0,
+    //   maxGas: 700000,
+    //   targetAddress: addr,
+    //   targetFunction: "getPrice",
+    //   parameter: new Args().serialize(),
+    // });
 
-    console.log("read price from SC: ", bytesToU64(new Uint8Array(result.returnValue)).toString())
+    // console.log("read price from SC: ", bytesToU64(new Uint8Array(result.returnValue)).toString())
 
-    await delay(1000)
+    delay(500)
   }
 
 })();

@@ -7,6 +7,7 @@
         "test": "asp --summary",
         "build": "npx massa-as-compile",
         "deploy:auto": "npm run build && ts-node src/deploy_autonomous.ts",
+        "deploy:order": "npm run build && ts-node src/deploy_order.ts",
         "deploy": "npm run build && ts-node src/deploy_oracle.ts",
         "prettier": "prettier '**/src/**/*.ts' --check && as-prettier --check assembly",
         "prettier:fix": "prettier '**/src/**/*.ts' --write && as-prettier --write assembly",

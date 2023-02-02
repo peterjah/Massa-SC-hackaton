@@ -10,7 +10,7 @@ const baseAccount = {
 
 let client = null
 
-const sc_addr = "A1yBrydXjQd14KSfCofymLMajEEKp2i2ZkKV2GSETxtyv8FTBA7"
+const oracle_addr = "A127azcRysbtMYCYuFr1ztbbjstymkr3mxaPhxBrwn4JhDrt11yx"
 
 // initialize a testnet client
 massa.ClientFactory.createDefaultClient(
@@ -78,7 +78,7 @@ function getPrice(number) {
     client.smartContracts().readSmartContract({
       fee: 0,
       maxGas: 700000,
-      targetAddress: sc_addr,
+      targetAddress: oracle_addr,
       targetFunction: "getPrice",
       parameter: new Args().serialize(),
     }).then((data) => {
@@ -95,6 +95,7 @@ function getPrice(number) {
 function waitForOrder() {
 document.getElementById("order").innerHTML = "DONE, your order has been exectued at price ".concat(val).concat(" !");
 }
+
 setInterval(getPrice, 1000);
 // function initialize() {
 //     let args = new Args();

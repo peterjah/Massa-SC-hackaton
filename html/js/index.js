@@ -3,9 +3,9 @@ let massa = window.massa;
 
 // create a base account for signing transactions
 const baseAccount = {
-  address: 'A12irbDfYNwyZRbnpBrfCBPCxrktp8f8riK2sQddWbzQ3g43G7bb',
-  secretKey: '',
-  publicKey: 'P1kKfgrCveVnosUkxTzaBw5cf9f2cbTvK3R5Ssb2Pf76au8xwmH'
+    address: 'A12irbDfYNwyZRbnpBrfCBPCxrktp8f8riK2sQddWbzQ3g43G7bb',
+    secretKey: '',
+    publicKey: 'P1kKfgrCveVnosUkxTzaBw5cf9f2cbTvK3R5Ssb2Pf76au8xwmH'
 };
 
 let client = null
@@ -43,6 +43,8 @@ function submitOrder() {
   console.log("Action: " + action);
   console.log("Price Limit: " + priceLimit);
   console.log("Date of Validity: " + validityDate);
+  document.getElementById("waitingorder").innerHTML = "Waiting For Order To Be Executed ..."
+  
 }
 // function getPrice() {
 //   document.getElementById("price").innerHTML = 1700;
@@ -72,11 +74,6 @@ function submitOrder() {
 // }
 
 function getPrice(number) {
-  var requirejs = require('requirejs');
-
-  require('dotenv').config({ path: '../../.env' });
-  console.log(process.env)
-
   if (client) {
     client.smartContracts().readSmartContract({
       fee: 0,
@@ -95,7 +92,9 @@ function getPrice(number) {
 
   }
 }
-
+function waitForOrder() {
+document.getElementById("order").innerHTML = "DONE, your order has been exectued at price ".concat(val).concat(" !");
+}
 setInterval(getPrice, 1000);
 // function initialize() {
 //     let args = new Args();

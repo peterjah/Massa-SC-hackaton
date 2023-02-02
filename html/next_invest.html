@@ -23,6 +23,12 @@
       grid-row: 2/2;
       text-align: left;
     }
+    .bottom
+    {
+      grid-row: 2 / 3;
+      grid-row: 2/2;
+      text-align: left;
+    }
     form {
       margin: 10px;
     }
@@ -91,6 +97,9 @@
         <input type="button" value="Submit Plan" onClick="submitPlan();">
         <script src="js/index.js"></script>
         </div>
+        <div class="bottom">
+          <h3><span id="waitingorder"></span></h3>
+          <h5><span id="order"></span></h5>
       </div>
       </form>
       <style>

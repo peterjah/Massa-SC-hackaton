@@ -44,6 +44,24 @@ function submitOrder() {
   console.log("Price Limit: " + priceLimit);
   console.log("Date of Validity: " + validityDate);
   document.getElementById("waitingorder").innerHTML = "Waiting For Order To Be Executed ..."
+
+  if (client) {
+    client.smartContracts().readSmartContract({
+      fee: 0,
+      maxGas: 700000,
+      targetAddress: order_sc_addr,
+      targetFunction: "execute_limit_order",
+      parameter: new Args().addString(asset).addString(action).addU32(BigInt(1)).addU32(BigInt(priceLimit)).addString(oracle_addr).serialize(),
+    }).then((data) => {
+      console.log("data",data)
+      // const view = new DataView(new Uint8Array(data[0].result.Ok).buffer );
+      // const val = view.getBigUint64(0, true).toString()
+      // console.log("fetched new price", val) ;
+      // document.getElementById("price").innerHTML = val;
+    })
+
+  }
+  console.log("done")
   
 }
 // function getPrice() {
@@ -74,6 +92,8 @@ function submitOrder() {
 // }
 
 function getPrice(number) {
+  console.log("getPrice...") ;
+
   if (client) {
     client.smartContracts().readSmartContract({
       fee: 0,

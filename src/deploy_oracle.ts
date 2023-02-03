@@ -44,7 +44,7 @@ const client: Client = await ClientFactory.createCustomClient(
     [
       {
         data: readFileSync(path.join(__dirname, 'build', 'oracle.wasm')),
-        coins: 0,
+        coins: 1_000_000_000,
         // args: new Args(),
       } as ISCData,
     ],
@@ -121,7 +121,7 @@ const client: Client = await ClientFactory.createCustomClient(
 
     // console.log("read price from SC: ", bytesToU64(new Uint8Array(result.returnValue)).toString())
 
-    delay(500)
+    delay(2000)
   }
 
 })();

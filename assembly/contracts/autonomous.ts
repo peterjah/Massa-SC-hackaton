@@ -7,28 +7,22 @@ import {
   Storage,
   unsafeRandom
 } from '@massalabs/massa-as-sdk';
-import { i64ToBytes } from '@massalabs/as-types';
+import { u64ToBytes } from '@massalabs/as-types';
 
 const PRICE_KEY = 'PRICE_KEY';
-const INIT_PRICE = 1000;
+const INIT_PRICE = 10000;
 
 export function constructor(_: StaticArray<u8>): StaticArray<u8> {
   // This line is important. It ensure that this function can't be called in the future.
   // If you remove this check someone could call your constructor function and reset your SC.
-  if (!callerHasWriteAccess()) {
-    return [];
-  }
+  assert(callerHasWriteAccess(), "Caller is not allowed");
 
-  // Set initial oracle price
-  generateEvent(`Set initial price to ${INIT_PRICE.toString()}`);
-  Storage.set(PRICE_KEY, INIT_PRICE.toString())
-
-  setFuturOperation()
+  sendFuturOperation()
 
   return [];
 }
 
-function setFuturOperation(): void {
+function sendFuturOperation(): void {
 
   const functionName = "setPrice"
   const address = Context.callee();
@@ -49,46 +43,47 @@ function setFuturOperation(): void {
   generateEvent(`next update planned on period ${validityStartPeriod.toString()} thread: ${validityStartThread.toString()}`);
 }
 
-
-function generateRandomIncrease(base: i64): i64 {
+// Generate a random price change of +/- 5%.
+function generateRandomIncrease(base: u64): u64 {
   const randomInt = unsafeRandom();
-  const increasePercent = randomInt % 20 - 10;
-  const increase = base * increasePercent / 100;
+  const increasePercent = abs(randomInt) % 10 - 5;
+  const increase = base as i64 * increasePercent / 100;
+
   return base + increase;
 }
 
 
 export function setPrice(_: StaticArray<u8>): StaticArray<u8> {
 
-  //TODO restrict access
+  assert(callerHasWriteAccess(), "Caller is not allowed");
 
-  let newPrice: i64;
+  let currentPrice: u64;
   if (!Storage.has(PRICE_KEY)) {
-    generateEvent(`price is not set (Should not happen)`);
-    return []
+    // Set initial oracle price
+    generateEvent(`Set initial price to ${INIT_PRICE.toString()}`);
+    Storage.set(PRICE_KEY, INIT_PRICE.toString())
+    currentPrice = INIT_PRICE;
+  } else {
+    currentPrice = u64.parse(Storage.get(PRICE_KEY));
   }
-  const currentPrice = Storage.get(PRICE_KEY)
-  newPrice = generateRandomIncrease(i64.parse(currentPrice))
+
+  const newPrice = generateRandomIncrease(currentPrice)
   Storage.set(PRICE_KEY, newPrice.toString())
   generateEvent(`🎉 Price updated: ${newPrice.toString()}`);
 
-  setFuturOperation()
+  sendFuturOperation();
 
-  return i64ToBytes(newPrice)
+  return u64ToBytes(newPrice);
 }
 
 
 export function getPrice(_: StaticArray<u8>): StaticArray<u8> {
-  generateEvent(`getPrice func`);
 
-  if (!Storage.has(PRICE_KEY)) {
-    generateEvent(`price is not set`);
-    return []
-  }
+  assert(!Storage.has(PRICE_KEY), "Price is not set");
 
-  const price = i64.parse(Storage.get(PRICE_KEY))
+  const price = u64.parse(Storage.get(PRICE_KEY))
   generateEvent(`current price is ${price.toString()}`);
 
-  return i64ToBytes(price)
+  return u64ToBytes(price);
 }
 

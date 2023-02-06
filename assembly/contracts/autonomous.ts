@@ -49,6 +49,9 @@ function generateRandomIncrease(base: u64): u64 {
   const increasePercent = abs(randomInt) % 10 - 5;
   const increase = base as i64 * increasePercent / 100;
 
+  if(increase < 0 && base <= abs(increase)) {
+    return 0;
+  }
   return base + increase;
 }
 
